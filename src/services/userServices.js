@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const createUserService = async (name,password) => {
     try {
         const hash = await bcrypt.hash(password, saltRounds);
-        const user = await User.create({ 
+        const user = await User.create({
             name:name,
             password:hash,
             role:"user"
@@ -31,6 +31,7 @@ const loginUserService = async (name,password) => {
 
         return { token: token,
             user: {
+                id: user._id,
                 name: user.name,
                 role: user.role
         }};
