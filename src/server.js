@@ -32,3 +32,5 @@ app.use('/', getHomepage);
         console.log(">>> Error connect to DB: ", error)
     }
 })()
+
+module.exports = app;
