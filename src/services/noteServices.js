@@ -1,11 +1,15 @@
 const jwt = require('jsonwebtoken');
 const noteModel = require('../models/note');
 
-const createNoteService = async (id_user,title, content) => {
-    console.log(id_user);
+const createNoteService = async (idUser,title, content) => {
     try{
+        const existsNote = await noteModel.findOne({ title: title });
+        console.log(idUser);
+        if (existsNote) {
+            throw new Error('Note already exists');
+        }
         const note = await noteModel.create({
-            id_user: id_user,
+            idUser: idUser,
             title: title,
             content: content
         });
@@ -15,11 +19,10 @@ const createNoteService = async (id_user,title, content) => {
         throw new Error(error.message);
     }
 }
-const getNotesService = async (id) => {
-    console.log(id);
+const getNotesService = async (idUser) => {
     try{
-        const note = await noteModel.find({id_user:id});
-        return note
+        const notes = await noteModel.find({idUser:idUser});
+        return notes;
     }catch(error)
     {
         throw new Error(error.message); 
@@ -27,22 +30,18 @@ const getNotesService = async (id) => {
 }
 
 const deleteNoteService = async (id) => {
-    try{
-        const note = await noteModel.deleteOne({id:id});
-        return note
-    }catch(error)
-    {
-        throw new Error(error.message); 
+    console.log("Deleting note with ID:", id);
+    try {
+        const note = await noteModel.deleteOne({ _id: id }); // Sửa lỗi
+        return note;
+    } catch (error) {
+        throw new Error(error.message);
     }
 };
 
 const updateNoteService = async (id, title, content) => {
     try{
-        const note = await noteModel.updateOne({id:id
-        }, {
-            title: title,
-            content: content
-        });
+        const note = await noteModel.findOneAndUpdate({ _id: id }, { title: title, content: content }, { new: true });  
         return note
     }catch(error)
     {

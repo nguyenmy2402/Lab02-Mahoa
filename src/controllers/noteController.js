@@ -1,9 +1,10 @@
+const { create } = require('../models/note');
 const {createNoteService, getNotesService} = require('../services/noteServices');
 const {updateNoteService, deleteNoteService} = require('../services/noteServices');
 const createNote = async (req, res) => {
     try {
-        const {id_user, title, content } = req.body;
-        const data = await createNoteService(id_user, title, content);
+        const {idUser, title, content } = req.body;
+        const data = await createNoteService(idUser, title, content);
         return res.status(201).json(data);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -12,8 +13,8 @@ const createNote = async (req, res) => {
 
 const getNotes = async (req, res) => {
     try {
-        const {id_user} = req.body;
-        const data = await getNotesService(id_user);
+        const {idUser} = req.body;
+        const data = await getNotesService(idUser);
         return res.status(200).json(data);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -41,6 +42,7 @@ const updateNote = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 }
+
 
 module.exports = {
     getNotes,

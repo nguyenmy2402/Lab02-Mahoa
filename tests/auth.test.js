@@ -27,15 +27,16 @@ describe("Authentication Tests", () => {
     afterAll(async () => {
         await mongoose.connection.close();
     });
+   
 
     test("Should register a new user", async () => {
         const res = await request(app)
-            .post("/register")
+            .post("v1/api/register")
             .send({
                 username: "testuser",
                 password: "123456",
             });
-        
+        console.log(res.body);
         expect(res.status).toBe(201);
         const userInDb = await User.findOne({ name: "testuser" });
         expect(userInDb).toBeTruthy();
