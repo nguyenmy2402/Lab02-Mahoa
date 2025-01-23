@@ -20,30 +20,59 @@ const createUserService = async (name,password) => {
         throw new Error(error.message);
     }
 }
-const loginUserService = async (name,password) => {
+// const loginUserService = async (name,password) => {
+//     try {
+//         const user = await User.findOne({ name: name });
+//         if (!user) {
+//             return res.status(400).json({ error: 'User not found' });
+//         }
+//         const isMatch = await bcrypt.compare(password, user.password);
+//         if (!isMatch) {
+//             return res.status(400).json({ error: 'Invalid password' });
+//         }
+//         const payload = { name: user.name };
+//         const token = jwt.sign(payload, process.env.PRIVATE_KEY, { expiresIn: process.env.EXPIRE_TIME });
+
+//         return { token: token,
+//             user: {
+//                 id: user._id,
+//                 name: user.name,
+//                 role: user.role
+//         }};
+//     }
+//     catch (error) {
+//         throw new Error(error.message);
+//     }
+// }
+
+const loginUserService = async (name, password) => {
     try {
-        const user = await User.findOne({ name: name });
+        const user = await User.findOne({ name });
         if (!user) {
-            return res.status(400).json({ error: 'User not found' });
+            throw new Error("User not found");
         }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid password' });
+            throw new Error("Invalid password");
         }
+
         const payload = { name: user.name };
         const token = jwt.sign(payload, process.env.PRIVATE_KEY, { expiresIn: process.env.EXPIRE_TIME });
 
-        return { token: token,
+        return {
+            token: token,
             user: {
                 id: user._id,
                 name: user.name,
-                role: user.role
-        }};
-    }
-    catch (error) {
+                role: user.role,
+            },
+        };
+    } catch (error) {
         throw new Error(error.message);
     }
-}
+};
+
 module.exports = {
     createUserService,
     loginUserService
