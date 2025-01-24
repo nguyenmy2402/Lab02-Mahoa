@@ -9,6 +9,8 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 8888;
 
+const path = require('path');
+
 //config cors
 app.use(cors());
 
@@ -22,6 +24,9 @@ configViewEngine(app);
 //khai báo route
 app.use('/v1/api/', apiRoutes);
 app.use('/', getHomepage);
+
+// Cung cấp các tệp tĩnh từ thư mục 'uploads/'
+app.use('/uploads', express.static(path.join(__dirname, 'src/upload')));
 
 
 (async () => {
