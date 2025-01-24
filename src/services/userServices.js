@@ -73,9 +73,21 @@ const loginUserService = async (name, password) => {
     }
 };
 
+// Service lấy danh sách người dùng
+const getUsersService = async () => {
+    try {
+        const users = await User.find();  // Lấy tất cả người dùng từ cơ sở dữ liệu
+        return users;  // Trả về danh sách người dùng
+    } catch (error) {
+        throw new Error('Error fetching users: ' + error.message);
+    }
+};
+
+
 module.exports = {
     createUserService,
-    loginUserService
+    loginUserService,
+    getUsersService
 }   
 
 

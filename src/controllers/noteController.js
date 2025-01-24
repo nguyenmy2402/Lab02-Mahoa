@@ -1,6 +1,6 @@
 const { create } = require('../models/note');
 const {createNoteService, getNotesService} = require('../services/noteServices');
-const {updateNoteService, deleteNoteService} = require('../services/noteServices');
+const {shareNoteService, updateNoteService, deleteNoteService} = require('../services/noteServices');
 
 
 const createNote = async (req, res) => {
@@ -88,10 +88,26 @@ const updateNote = async (req, res) => {
     }
 }
 
+const shareNote = async (req, res) => {
+    try {
+        const { noteId, userIds } = req.body;  // Lấy noteId và danh sách userIds từ body
+
+        // Gọi service chia sẻ note
+        const note = await shareNoteService(noteId, userIds);
+
+        return res.status(200).json({
+            message: 'Note shared successfully',
+            note: note
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 module.exports = {
     getNotes,
     createNote,
     deleteNote,
-    updateNote
+    updateNote,
+    shareNote
 };

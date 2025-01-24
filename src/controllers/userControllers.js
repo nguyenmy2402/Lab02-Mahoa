@@ -1,4 +1,4 @@
-const { createUserService,loginUserService } = require('../services/userServices');
+const { createUserService,loginUserService, getUsersService } = require('../services/userServices');
 const createUser = async (req, res) => {
     try {
         const { name, password } = req.body;
@@ -44,7 +44,18 @@ const handleLogin = async (req, res) => {
     }
 };
 
+// Controller lấy danh sách người dùng
+const getUsers = async (req, res) => {
+    try {
+        const users = await getUsersService();  // Gọi service để lấy danh sách người dùng
+        res.status(200).json(users);  // Trả về danh sách người dùng
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error: error.message });
+    }
+};
+
 module.exports = {
     createUser,
-    handleLogin
+    handleLogin,
+    getUsers
 };

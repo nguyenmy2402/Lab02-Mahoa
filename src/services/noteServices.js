@@ -41,16 +41,30 @@ const createNoteService = async (idUser,title, content) => {
 //     }
 // }
 
-const getNotesService = async (idUser) => {
+// const getNotesService = async (idUser) => {
+//     try {
+//         const notes = await noteModel.find({ idUser });  // Lấy tất cả các ghi chú của người dùng
+//         return notes;  // Trả về mảng các ghi chú
+//     } catch (error) {
+//         console.error('Database error:', error);
+//         throw new Error('Error retrieving notes');
+//     }
+// };
+
+const getNotesService = async (userId) => {
     try {
-        const notes = await noteModel.find({ idUser });  // Lấy tất cả các ghi chú của người dùng
-        return notes;  // Trả về mảng các ghi chú
+        // Lấy tất cả các ghi chú của người dùng (bao gồm cả các ghi chú đã được chia sẻ với người dùng)
+        const notes = await noteModel.find({
+            $or: [
+                { idUser: userId },  // Các ghi chú của người dùng
+                { sharedWith: userId }  // Các ghi chú được chia sẻ với người dùng
+            ]
+        });
+        return notes;
     } catch (error) {
-        console.error('Database error:', error);
-        throw new Error('Error retrieving notes');
+        throw new Error(error.message);
     }
 };
-
 // const deleteNoteService = async (id) => {
 //     console.log("Deleting note with ID:", id);
 //     try {
@@ -96,9 +110,27 @@ const updateNoteService = async (id, title, content) => {
     }
 };
 
+const shareNoteService = async (noteId, userIds) => {
+    try {
+        const note = await noteModel.findById(noteId);
+        if (!note) {
+            throw new Error('Note not found');
+        }
+
+        // Cập nhật trường sharedWith với các userIds mới
+        note.sharedWith.push(...userIds);
+        await note.save();  // Lưu thay đổi vào cơ sở dữ liệu
+
+        return note;  // Trả về note đã được chia sẻ
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
 module.exports = {
     createNoteService,
     getNotesService,
     deleteNoteService,
-    updateNoteService
+    updateNoteService,
+    shareNoteService
 };
