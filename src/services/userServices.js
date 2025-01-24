@@ -3,17 +3,30 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
-const createUserService = async (name,password) => {
+const { encryptAES, SECRET_KEY } = require("../utils/cryptoUtils");
+const crypto = require('crypto');
+const createUserService = async (name,password,privateKey) => {
     const existsUser = await User.findOne({ name: name });
+    console.log(privateKey);
     if (existsUser) {
         throw new Error('User already exists');
     }
     try {
         const hash = await bcrypt.hash(password, saltRounds);
+        const dh = crypto.createDiffieHellman(2048);
+        const AES = {
+            privateKey: privateKey
+        };
+        const diffieHellman = {
+            publicKey: dh.generateKeys('hex'),
+            privateKey: dh.getPrivateKey('hex')
+        };    
         const user = await User.create({
-            name:name,
-            password:hash,
-            role:"user"
+            name: name,
+            password: hash,
+            role: 'user',
+            AES: AES,
+            DiffieHellman: diffieHellman
         });
         return user;
     } catch (error) {
@@ -59,16 +72,16 @@ const loginUserService = async (name, password) => {
 
         const payload = { name: user.name };
         const token = jwt.sign(payload, process.env.PRIVATE_KEY, { expiresIn: process.env.EXPIRE_TIME });
-
-        return {
-            token: token,
+        return { token: token,
             user: {
                 id: user._id,
                 name: user.name,
                 role: user.role,
-            },
-        };
-    } catch (error) {
+                AES: user.AES,
+                DiffieHellman: user.DiffieHellman
+        }};
+    }
+    catch (error) {
         throw new Error(error.message);
     }
 };
