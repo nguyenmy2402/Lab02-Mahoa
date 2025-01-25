@@ -11,7 +11,8 @@ const createNoteService = async (idUser,title, content) => {
         const note = await noteModel.create({
             idUser: idUser,
             title: title,
-            content: content
+            content: content,
+            isShared: false
         });
         return note;
     }catch(error)
@@ -48,9 +49,29 @@ const updateNoteService = async (id, title, content) => {
         throw new Error(error.message); 
     }
 };
+const updateIsSharedService = async (id, isShared) => {
+    try{
+        const note = await noteModel.findOneAndUpdate({ _id: id }, { isShared: isShared }, { new: true });  
+        return note
+    }catch(error)
+    {
+        throw new Error(error.message); 
+    }
+};
+const findNoteService = async (id) => {
+    try {
+        const note = await noteModel.findOne({ _id: id });
+        return note;
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+}
 module.exports = {
     createNoteService,
     getNotesService,
     deleteNoteService,
-    updateNoteService
+    updateNoteService,
+    updateIsSharedService,
+    findNoteService
 };

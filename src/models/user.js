@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
         privateKey: { type: String, required: true }, // Private Key được mã hóa
     },
     DiffieHellman:{
-        publicKey: { type: String, required: true }, // Public Key được mã hóa
         privateKey: { type: String, required: true }, // Private Key được mã hóa
     }
 },{timestamps:true});

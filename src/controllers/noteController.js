@@ -1,6 +1,8 @@
-const { create } = require('../models/note');
+
 const {createNoteService, getNotesService} = require('../services/noteServices');
 const {updateNoteService, deleteNoteService} = require('../services/noteServices');
+const { findShareService, deleteShareService, createShareService } = require('../services/shareServices');
+
 const createNote = async (req, res) => {
     try {
         const {idUser, title, content } = req.body;
@@ -25,6 +27,11 @@ const deleteNote = async (req, res) => {
 
     try {
         const id = req.body.id;
+        const share = await findShareService(id);
+        if(share)
+        {
+            await deleteShareService(id);
+        }
         const data = await deleteNoteService(id);
         return res.status(200).json(data);
     } catch (error) {

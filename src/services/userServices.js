@@ -5,21 +5,20 @@ const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 const { encryptAES, SECRET_KEY } = require("../utils/cryptoUtils");
 const crypto = require('crypto');
-const createUserService = async (name,password,privateKey) => {
+const createUserService = async (name,password,privateKeyOfAES,privateKeyOfDiffieHellman) => {
     const existsUser = await User.findOne({ name: name });
-    console.log(privateKey);
+    console.log(privateKeyOfAES);
     if (existsUser) {
         throw new Error('User already exists');
     }
     try {
         const hash = await bcrypt.hash(password, saltRounds);
-        const dh = crypto.createDiffieHellman(2048);
         const AES = {
-            privateKey: privateKey
+            privateKey: privateKeyOfAES
         };
         const diffieHellman = {
-            publicKey: dh.generateKeys('hex'),
-            privateKey: dh.getPrivateKey('hex')
+           
+            privateKey: privateKeyOfDiffieHellman
         };    
         const user = await User.create({
             name: name,
