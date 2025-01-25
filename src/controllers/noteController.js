@@ -13,7 +13,7 @@ const createNote = async (req, res) => {
 
 const getNotes = async (req, res) => {
     try {
-        const {idUser} = req.body;
+        const {idUser} = req.query;
         const data = await getNotesService(idUser);
         return res.status(200).json(data);
     } catch (error) {
